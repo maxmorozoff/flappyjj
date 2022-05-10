@@ -11,6 +11,7 @@ var mode, delta;
 var playend = false, playdata = [];
 var rafId = undefined
 var rafActive = false
+var birdFrame = 24
 
 var clearCanvas = function(){
 	ctx.fillStyle = '#4EC0CA';
@@ -29,6 +30,7 @@ var loadImages = function(){
 			birdN = 0;
 			birdV = 0;
 			birdPos = width * 0.35;
+			birdFrame = bird.height / 4;
 			score = 0;
 			pipeSt = 0;
 			pipeNumber = 10;
@@ -143,11 +145,14 @@ var drawLand = function(){
 }
 
 var drawPipe = function(x, y){
+	// console.log({x,y,birdPos,birdY})
 	ctx.drawImage(pipe, x, 0, pipe.width, y);
 	ctx.drawImage(pipeDown, x, y);
 	ctx.drawImage(pipe, x, y + 168 + delta, pipe.width, height - 112);
 	ctx.drawImage(pipeUp, x, y + 144 + delta);
-	if(x < birdPos + 32 && x + 50 > birdPos && (birdY < y + 22 || birdY + 22 > y + 144 + delta)){
+	if(x < birdPos + 85 -30 && x + 50 -30 > birdPos && (birdY < y + 24 -3 || birdY + 90 > y + 144 + delta)){
+		// if(x < birdPos + 85 && x + 50 > birdPos && (birdY < y + 24 || birdY + 90 > y + 144 + delta)){
+		// console.log({x,y,birdPos,birdY})
 		stopAnimation();
 		death = 1;
 	}
@@ -164,7 +169,14 @@ var drawBird = function(){
 //	ctx.translate(width * 0.35 + 17, birdY + 12);
 //	var deg = -Math.atan(birdV / 2) / 3.14159;
 //	ctx.rotate(deg);
-	ctx.drawImage(bird, 0, birdN * 24, bird.width, bird.height / 4, birdPos, birdY, bird.width, bird.height / 4);
+	ctx.drawImage(bird, 
+		// source image
+		0, birdN * birdFrame, 
+		bird.width, birdFrame, 
+		// destination image
+		birdPos, birdY, 
+		bird.width/2, birdFrame/2
+	);
 //	ctx.rotate(-deg);
 //	ctx.translate(-width * 0.35 - 17, -birdY - 12);
 	birdF = (birdF + 1) % 6;
@@ -172,7 +184,7 @@ var drawBird = function(){
 		birdN = (birdN + 1) % 4;
 	birdY -= birdV;
 	birdV -= dropSpeed;
-	if(birdY + 138 > height){
+	if(birdY + 112 + birdFrame/2 -8  > height){
 		stopAnimation();
 		death = 1;
 	}
@@ -298,7 +310,7 @@ function easyMode(){
 	stopAnimation();
 	dropSpeed = 0.3;
 	mode = 0;
-	delta = 100;
+	delta = 150;
 	initCanvas();
 }
 
@@ -309,7 +321,7 @@ function normalMode(){
 	stopAnimation();
 	dropSpeed = 0.3;
 	mode = 1;
-	delta = 0;
+	delta = 100;
 	initCanvas();
 }
 
@@ -320,7 +332,7 @@ function hardMode(){
 	stopAnimation();
 	dropSpeed = 0.3;
 	mode = 2;
-	delta = 0;
+	delta = 90;
 	initCanvas();
 }
 
