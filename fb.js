@@ -8,9 +8,7 @@ var score, maxScore;
 var dropSpeed;
 var flashlight_switch = false, hidden_switch = false;
 var mode, delta;
-var wechat = false;
 var playend = false, playdata = [];
-var wxData;
 
 var clearCanvas = function(){
 	ctx.fillStyle = '#4EC0CA';
@@ -116,9 +114,6 @@ var deathAnimation = function(){
         ctx.drawImage(scoreBoard, width / 2 - 118, height / 2 - 54);
         playend = true;
         playdata = [mode, score];
-        if(window.window.WeixinApi && window.WeixinJSBridge) {
-            //alert("您在 " + ["easy", "normal", "hard"][mode] + " 模式中取得 " + score + " 分，右上角分享成绩到朋友圈吧~");
-        }
     }
 	ctx.drawImage(ready, width / 2 - 57, height / 2 + 10);
 	maxScore = Math.max(maxScore, score);
@@ -332,53 +327,7 @@ window.onload = function(){
     mode = 0;
     score = 0;
     playdata = [0, 0];
-    if(window.window.WeixinApi || window.WeixinJSBridge) {
-        wechat = true;
-        WeixinApi.ready(function(Api) {
-
-            wxData = {
-                "appId": "",
-                "imgUrl" : 'http://shud.in/flappybird/images/logo.png',
-                "imgWidth": '200',
-                "imgHeight": '200',
-                "link" : 'http://shud.in/flappybird',
-                "desc" : 'Easy / Normal / Hard 三种难度, Flappy Bird 网页版',
-                "title" : "Flappy Bird"
-            };
-
-            var wxCallbacks = {
-                ready : function() {
-                    wxData["title"] = 'Flappy Bird';
-                    if(flashlight_switch)
-                        wxData["desc"] = '我刚刚开启 flashlight, 在 ' + ["easy", "normal", "hard"][playdata[0]] + ' 下取得 ' + playdata[1] + ' 分, 你也来试试吧！';
-                    else
-                        wxData["desc"] = '我刚刚在 ' + ["easy", "normal", "hard"][playdata[0]] + ' 下取得 ' + playdata[1] + ' 分, 你也来试试吧！';
-                },
-                cancel : function(resp) {
-                },
-                fail : function(resp) {
-                    alert("分享失败 > <");
-                },
-                confirm : function(resp) {
-                    alert("分享成功 XD");
-                },
-                all : function(resp,shareTo) {
-                }
-            };
-
-            // 用户点开右上角popup菜单后，点击分享给好友，会执行下面这个代码
-            Api.shareToFriend(wxData, wxCallbacks);
-
-            // 点击分享到朋友圈，会执行下面这个代码
-            Api.shareToTimeline(wxData, wxCallbacks);
-
-            // 点击分享到腾讯微博，会执行下面这个代码
-            Api.shareToWeibo(wxData, wxCallbacks);
-
-            // iOS上，可以直接调用这个API进行分享，一句话搞定
-            Api.generalShare(wxData, wxCallbacks);
-        });
-    }
+    
 	maxScore = 0;
 	dropSpeed = 0.3;
 	mode = 0;
