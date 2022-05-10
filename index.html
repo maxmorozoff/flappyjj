@@ -77,8 +77,14 @@
 #easy, #flashlight{
 	left: 2px;
 }
-#normal, #hidden{
+#normal, #hidden, #fullscreen{
 	left: 74px;
+}
+#fullscreen {
+	font-family: sans-serif;
+    font-size: 19px;
+    font-weight: bold;
+    line-height: 18px;
 }
 #hard{
 	left: 146px;
@@ -97,9 +103,34 @@ canvas {
 	<br/>
 	<div id="modes">
 		<div id="flashlight" class="mode">FL</div>
+		<div id="fullscreen" class="mode" onclick="toggleFullScreen()">⛶</div>
 		<!-- <div id="hidden" class="mode">HD</div> -->
 	</div>
     <!-- <a href="https://github.com/quietshu/FlappyBird"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a> -->
   <script type="application/javascript" src="fb.js"></script>
+
+  <script>
+		function toggleFullScreen() {
+
+			let doc = window.document;
+			let docEl = doc.documentElement;
+
+			let requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+			let cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+			if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+				requestFullScreen.call(docEl);
+			}
+			else {
+				cancelFullScreen.call(doc);
+			}
+
+			if ('wakeLock' in navigator) {
+				navigator.wakeLock.request('screen')
+			}
+
+			window.screen.orientation.lock("portrait-primary");
+		}
+  </script>
 </body>
 </html>
