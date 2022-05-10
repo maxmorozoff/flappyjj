@@ -9,6 +9,8 @@ var dropSpeed;
 var flashlight_switch = false, hidden_switch = false;
 var mode, delta;
 var playend = false, playdata = [];
+var rafId = undefined
+var rafActive = false
 
 var clearCanvas = function(){
 	ctx.fillStyle = '#4EC0CA';
@@ -146,7 +148,7 @@ var drawPipe = function(x, y){
 	ctx.drawImage(pipe, x, y + 168 + delta, pipe.width, height - 112);
 	ctx.drawImage(pipeUp, x, y + 144 + delta);
 	if(x < birdPos + 32 && x + 50 > birdPos && (birdY < y + 22 || birdY + 22 > y + 144 + delta)){
-		clearInterval(animation);
+		stopAnimation();
 		death = 1;
 	}
 	else if(x + 40 < 0){
@@ -171,7 +173,7 @@ var drawBird = function(){
 	birdY -= birdV;
 	birdV -= dropSpeed;
 	if(birdY + 138 > height){
-		clearInterval(animation);
+		stopAnimation();
 		death = 1;
 	}
 	if(death)
@@ -243,10 +245,20 @@ var drawCanvas = function(){
 		drawHidden();
 	drawBird();
 	drawScore();
+
+	if (!rafActive) return;
+	rafId = requestAnimationFrame(drawCanvas);
 }
 
-var anim = function(){
-	animation = setInterval(drawCanvas, 1000 / 60);
+function startAnimation () {
+	if (rafActive) return;
+	rafActive = true;
+	rafId = requestAnimationFrame(drawCanvas);
+}
+
+function stopAnimation() {
+	rafActive = false
+	cancelAnimationFrame(rafId)
 }
 
 var jump = function(){
@@ -267,7 +279,7 @@ var jump = function(){
 			pipes.push(Math.floor(Math.random() * (height - 300 - delta) + 10));
 			pipesDir.push((Math.random() > 0.5));
 		}
-		anim();
+		startAnimation();
 	}
 	if(mode == 0)
 		birdV = 6;
@@ -283,7 +295,7 @@ function easyMode(){
 	easy.style["box-shadow"] = "0 0 0 2px #165CF3";
 	normal.style["box-shadow"] = "";
 	hard.style["box-shadow"] = "";
-	clearInterval(animation);
+	stopAnimation();
 	dropSpeed = 0.3;
 	mode = 0;
 	delta = 100;
@@ -294,7 +306,7 @@ function normalMode(){
 	easy.style["box-shadow"] = "";
 	normal.style["box-shadow"] = "0 0 0 2px #165CF3";
 	hard.style["box-shadow"] = "";
-	clearInterval(animation);
+	stopAnimation();
 	dropSpeed = 0.3;
 	mode = 1;
 	delta = 0;
@@ -305,7 +317,7 @@ function hardMode(){
 	easy.style["box-shadow"] = "";
 	normal.style["box-shadow"] = "";
 	hard.style["box-shadow"] = "0 0 0 2px #165CF3";
-	clearInterval(animation);
+	stopAnimation();
 	dropSpeed = 0.3;
 	mode = 2;
 	delta = 0;
