@@ -151,7 +151,7 @@ var drawPipe = function(x, y){
 		stopAnimation();
 		death = 1;
 	}
-	else if(x + 40 < 0){
+	else if(x + pipe.width < 0){
 		pipeSt++;
 		pipeNumber++;
 		pipes.push(Math.floor(Math.random() * (height - 300 - delta) + 10));
