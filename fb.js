@@ -12,6 +12,7 @@ var playend = false, playdata = [];
 var rafId = undefined
 var rafActive = false
 var birdFrame = 24
+var blockReplay = false
 
 var clearCanvas = function(){
 	ctx.fillStyle = '#4EC0CA';
@@ -98,7 +99,7 @@ var initCanvas = function(){
 	if(is_touch_device()){
 		canvas.addEventListener("touchend", function(e) { e.preventDefault(); }, false);
         canvas.addEventListener("touchstart", function(e) {
-	        	jump();
+	        	jump(e);
             e.preventDefault();
         }, false);
 	}
@@ -110,6 +111,7 @@ var initCanvas = function(){
 }
 
 var deathAnimation = function(){
+	blockReplay = true
 	if(splash){
 		ctx.drawImage(splash, width / 2 - 94, height / 2 - 54);
 		splash = undefined;
@@ -119,8 +121,11 @@ var deathAnimation = function(){
         playend = true;
         playdata = [mode, score];
     }
-	ctx.drawImage(ready, width / 2 - 57, height / 2 + 10);
-	maxScore = Math.max(maxScore, score);
+	window.setTimeout(_=>{
+		ctx.drawImage(ready, width / 2 - 57, height / 2 + 10);
+		maxScore = Math.max(maxScore, score);
+		blockReplay = false
+	},500)
 }
 
 var drawSky = function(){
@@ -141,6 +146,7 @@ var drawLand = function(){
 	var tmp = Math.floor(dist - width * 0.65) % 220;
 	if(dist >= width * 0.65 && Math.abs(tmp) <= 1){
 		score++;
+		if (score == 15 && mode == 2) document.querySelector('body').classList.add('animated')
 	}
 }
 
@@ -273,8 +279,12 @@ function stopAnimation() {
 	cancelAnimationFrame(rafId)
 }
 
-var jump = function(){
-	if(death){
+var jump = function(e){
+	if(death ){
+		if (blockReplay) return// blockReplay = false;
+		// console.log(e)
+		// ready, width / 2 - 57, height / 2 + 10
+		// if () return
 		dist = 0;
 		birdY = (height - 112) / 2;
 		birdF = 0;

@@ -94,6 +94,20 @@ canvas {
 	transform: translate3d(0, 0, 0);
 	image-rendering: pixelated;
 }
+.animated {
+  -webkit-animation: filter-animation 8s infinite;
+  animation: filter-animation 8s infinite;
+}
+
+@-webkit-keyframes filter-animation {
+	0%,to {	-webkit-filter: hue-rotate(0deg);   }
+	50% {	-webkit-filter: hue-rotate(100deg); }
+}
+
+@keyframes filter-animation {
+	0%,to {	filter: hue-rotate(0deg);   }
+	50% {	filter: hue-rotate(100deg); }
+}
 </style>
 <body style="padding:0;margin:0;outline:0;overflow:hidden">
 	<canvas id="canvas">=_=||</canvas>
